@@ -18,6 +18,8 @@ defmodule BuzzerWeb.BuzzerView do
     {:ok, assign(socket, invalid_name: false, name: false, current_users: current_users(), is_host: false, current_buzzer: current_buzzer())}
   end
 
+  # view
+
   def users_list(assigns) do
     ~H"""
     <h1>Current users</h1>
@@ -29,7 +31,7 @@ defmodule BuzzerWeb.BuzzerView do
             (Host)
           <% end %>
           <%= if @current_buzzer == user do %>
-            Buzzing!!
+            : Buzzinga!!
           <% end %>
         </li>
       <% end %>
@@ -82,6 +84,10 @@ defmodule BuzzerWeb.BuzzerView do
     ~H"""
     <%= if @name do %>
       <.joined_header is_host={@is_host} current_buzzer={@current_buzzer} name={@name} />
+      <%= if @current_buzzer do %>
+        <h1><%= @current_buzzer %> is buzzing!!</h1>
+        <img src={Routes.static_path(@socket, "/images/buzz.jpg")} alt="BUZZINGA"/>
+      <% end %>
     <% else %>
       <.join_form invalid_name={@invalid_name} />
     <% end %>
@@ -89,6 +95,8 @@ defmodule BuzzerWeb.BuzzerView do
     <.users_list current_users={@current_users} current_buzzer={@current_buzzer} />
     """
   end
+
+  # some helper functions
 
   defp extract_user_name(%{name: name}), do: name
   defp extract_user_name(_), do: nil
@@ -115,6 +123,8 @@ defmodule BuzzerWeb.BuzzerView do
     end
   end
 
+  # handle events triggered by the phoenix app
+
   def handle_info(%{event: "presence_diff", payload: %{joins: joins, leaves: leaves}}, socket) do
     joining = process_presence_list(joins)
     leaving = process_presence_list(leaves)
@@ -132,6 +142,8 @@ defmodule BuzzerWeb.BuzzerView do
   def handle_info(%{event: "buzzer_cleared"}, socket) do
     {:noreply, assign(socket, current_buzzer: nil)}
   end
+
+  # handle events triggered by the frontend
 
   def handle_event("buzz", _, socket) do
     if !current_buzzer() do
