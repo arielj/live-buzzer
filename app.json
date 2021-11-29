@@ -1,0 +1,8 @@
+{
+  "name": "LiveView Buzzer",
+  "buildpacks": [
+    {
+      "url": "https://github.com/HashNuke/heroku-buildpack-elixir.git"
+    }
+  ]
+}
